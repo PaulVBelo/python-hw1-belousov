@@ -52,7 +52,7 @@ class Matrix(Tensor):
             return Matrix((1, self.cols),
                           [self.data[self.conv_rc2i(key, c)] for c in range(self.cols)])
         else:
-            raise IndexError(f"Index out of range: {key} not in [-{self.rows}, {self.rows})")
+            raise IndexError("Index out of range")
 
     def _handle_list(self, key: list):
         for i in range(len(key)):
@@ -60,7 +60,7 @@ class Matrix(Tensor):
                 raise TypeError("Unsupported row index type")
 
             if not -self.rows <= key[i] < self.rows:
-                raise IndexError(f"Index {i} out of range: {key[i]} not in [-{self.rows}, {self.rows})")
+                raise IndexError("Index out of range")
 
         return Matrix((len(key), self.cols),
                       [self.data[self.conv_rc2i(r, c)] for r in key for c in range(self.cols)])
@@ -73,10 +73,18 @@ class Matrix(Tensor):
             raise ValueError("Tuple must have two elements")
 
         r_key, c_key = key
-        return self._process_tuple_keys(r_key, c_key)
 
-    def _process_tuple_keys(self, r_key, c_key):
-       pass
+        if isinstance(r_key, int) and isinstance(c_key, int):
+            if -self.rows <= r_key < self.rows and -self.cols < c_key <self.cols:
+                return self.data[self.conv_rc2i(r_key, c_key)]
+            else:
+                raise IndexError("Index out of range")
+
+        elif isinstance(r_key, (int, list, slice)) and isinstance(c_key, (int, list, slice)):
+            row_matrix = self.__getitem__(r_key)
+
+
+
 
 
 
