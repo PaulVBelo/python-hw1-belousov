@@ -35,6 +35,64 @@ class Matrix(Tensor):
 
         return s
 
+    def __getitem__(self, key):
+        if isinstance(key, tuple):
+            return self._handle_tuple(key)
+        elif isinstance(key, int):
+            return self._handle_one_row(key)
+        elif isinstance(key, list):
+            return self._handle_list(key)
+        elif isinstance(key, slice):
+            return self._handle_slice(key)
+        else:
+            raise TypeError("Unsupported key type")
+
+    def _handle_tuple(self, key: tuple):
+        pass
+
+    def _handle_one_row(self, key: int):
+        if key < 0: key += self.rows
+        if 0 <= key < self.rows:
+            return Matrix((1, self.cols),
+                          [self.data[self.conv_rc2i(key, c)] for c in range(self.cols)])
+        else:
+            raise IndexError(f"Index out of range: {key} not in [0, {self.rows})")
+
+    def _handle_list(self, key: list):
+        for i in range(len(key)):
+            if not isinstance(key[i], int):
+                raise TypeError("Unsupported row index type")
+
+            if key[i] < 0: key[i] += self.rows
+
+            if 0 <= key[i] < self.rows:
+                raise IndexError(f"Index {i} out of range: {key[i]} not in [0, {self.rows}")
+
+        return Matrix((len(key), self.cols),
+                      [self.data[self.conv_rc2i(r, c)] for r in key for c in range(self.cols)])
+
+    def _handle_slice(self, key: slice):
+        start = key.start or 0
+        stop = key.stop or self.rows
+        step = key.step or 1
+
+        return Matrix((len(range(start, stop, step)), self.cols), [
+            self.data[self.conv_rc2i(r, c)] for r in range(start, stop, step) for c in range(self.cols)
+        ])
+
+    def _handle_tuple(self, key):
+        if len(key) != 2:
+            raise ValueError("Tuple must have two elements")
+
+        r_key, c_key = key
+        return self._process_tuple_keys(r_key, c_key)
+
+    def _process_tuple_keys(self, r_key, c_key):
+        pass
+
+
+
+
 
 if __name__ == "__main__":
     dbg_matrix = Matrix((3, 4), [i for i in range(12)])
