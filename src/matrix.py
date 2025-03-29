@@ -1,4 +1,3 @@
-import tensor
 from src.tensor import Tensor
 
 
