@@ -75,19 +75,30 @@ class Matrix(Tensor):
         r_key, c_key = key
 
         if isinstance(r_key, int) and isinstance(c_key, int):
-            if -self.rows <= r_key < self.rows and -self.cols < c_key <self.cols:
+            if -self.rows <= r_key < self.rows and -self.cols < c_key < self.cols:
                 return self.data[self.conv_rc2i(r_key, c_key)]
             else:
                 raise IndexError("Index out of range")
 
         elif isinstance(r_key, (int, list, slice)) and isinstance(c_key, (int, list, slice)):
-            row_matrix = self.__getitem__(r_key)
+            if isinstance(r_key, int): r_key = [r_key]
+            if isinstance(r_key, slice): r_key = list(range(*r_key.indices(self.rows)))
 
+            if isinstance(c_key, int): c_key = [c_key]
+            if isinstance(c_key, slice): c_key = list(range(*c_key.indices(self.cols)))
 
+            for r in r_key:
+                if not -self.rows <= r < self.rows:
+                    raise IndexError("Index out of range")
 
+            for c in c_key:
+                if not -self.cols <= c < self.cols:
+                    raise IndexError("Index out of range")
 
-
-
+            return Matrix(
+                (len(r_key), len(c_key)),
+                [self.data[self.conv_rc2i(r, c)] for r in r_key for c in c_key]
+            )
 
 
 if __name__ == "__main__":
@@ -100,3 +111,6 @@ if __name__ == "__main__":
     print(dbg_matrix[-3])
     print(dbg_matrix[[0, 1, 2, -1, -2, -3]])
     print(dbg_matrix[::-1])
+    print(dbg_matrix[1, 2])
+    print(dbg_matrix[[1, -1], [0, -2]])
+    print(dbg_matrix[::-1, ::-1])
