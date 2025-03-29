@@ -6,12 +6,12 @@ class Matrix(Tensor):
 
     def __init__(self, dim: tuple, data: list):
         if not isinstance(dim, tuple) or len(dim) != 2:
-            raise ValueError("Wrong dimensions: tuple of length 2 required")
+            raise ValueError("Wrong dimensions")
 
         self.rows, self.cols = dim
 
         if self.rows * self.cols != len(data):
-            raise ValueError("Wrong matrix size: len(data) the same as prod of integer dimensions")
+            raise ValueError("Wrong matrix size")
 
         super().__init__(dim, data)
 
@@ -70,7 +70,7 @@ class Matrix(Tensor):
 
     def _handle_tuple(self, key):
         if len(key) != 2:
-            raise ValueError("Tuple must have two elements")
+            raise ValueError("Tuple key must have two elements")
 
         r_key, c_key = key
 
