@@ -1,6 +1,5 @@
 from src.tensor import Tensor
 
-
 class Matrix(Tensor):
 
     def __init__(self, dim: tuple, data: list):
@@ -14,10 +13,10 @@ class Matrix(Tensor):
 
         super().__init__(dim, data)
 
-    def conv_rc2i(self, r: int, c: int) -> int:
+    def conv_rc2i(self, r: int, c: int):
         return r * self.cols + c
 
-    def conv_i2rc(self, i: int) -> tuple:
+    def conv_i2rc(self, i: int):
         return i // self.cols, i % self.cols
 
     def __str__(self):
@@ -67,7 +66,7 @@ class Matrix(Tensor):
     def _handle_slice(self, key: slice):
         return self._handle_list(list(range(*key.indices(self.rows))))
 
-    def _handle_tuple(self, key):
+    def _handle_tuple(self, key: tuple):
         if len(key) != 2:
             raise ValueError("Tuple key must have two elements")
 
